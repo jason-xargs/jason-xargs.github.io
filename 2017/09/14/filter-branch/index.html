@@ -3,13 +3,21 @@
 <head>
   <meta charset="utf-8">
   
-  <title>MUSE</title>
+  <title>filter-branch | MUSE</title>
   <meta name="author" content="Jason">
+  
+  <meta name="description" content="修改git上次commit的user.name/user.email
+1git commit –amend –author=‘Your Name you@example.com’
+
+修改git历史commit的user.name/user.email
+
+
+1234567891011121314151">
   
   
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
 
-  
+  <meta property="og:title" content="filter-branch"/>
   <meta property="og:site_name" content="MUSE"/>
 
   
@@ -43,8 +51,7 @@
 <div class="clearfix"></div>
 </header>
   <div id="content" class="inner">
-    <div id="main-col" class="alignleft"><div id="wrapper">
-  <article class="post">
+    <div id="main-col" class="alignleft"><div id="wrapper"><article class="post">
   
   <div class="post-content">
     <header>
@@ -54,7 +61,7 @@
       
       
   
-    <h1 class="title"><a href="/2017/09/14/filter-branch/">filter-branch</a></h1>
+    <h1 class="title">filter-branch</h1>
   
 
     </header>
@@ -74,6 +81,17 @@
     <footer>
       
         
+  
+  <div class="categories">
+    <a href="/categories/git/">git</a>
+  </div>
+
+        
+  
+  <div class="tags">
+    <a href="/tags/git/">git</a>
+  </div>
+
         
       
       <div class="clearfix"></div>
@@ -82,109 +100,13 @@
 </article>
 
 
+<section id="comment">
+  <h1 class="title">Kommentare</h1>
 
-
-  <article class="post">
   
-  <div class="post-content">
-    <header>
-      
-        <div class="icon"></div>
-        <time datetime="2017-09-14T12:32:14.000Z"><a href="/2017/09/14/systemctl/">2017-09-14</a></time>
-      
-      
-  
-    <h1 class="title"><a href="/2017/09/14/systemctl/">systemctl</a></h1>
-  
+</section>
 
-    </header>
-    <div class="entry">
-      
-        <h3 id="command-help"><a href="#command-help" class="headerlink" title="command help"></a>command help</h3><table>
-<thead>
-<tr>
-<th>task</th>
-<th>command</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td>启动</td>
-<td>systemctl start httpd.service</td>
-</tr>
-<tr>
-<td>停止</td>
-<td>systemctl stop httpd.service</td>
-</tr>
-<tr>
-<td>重启</td>
-<td>systemctl restart httpd.service</td>
-</tr>
-<tr>
-<td>删除服务</td>
-<td>rm user.service</td>
-</tr>
-<tr>
-<td>检查服务状态</td>
-<td>systemctl status httpd.service</td>
-</tr>
-<tr>
-<td>自动启动</td>
-<td>systemctl enable httpd.service</td>
-</tr>
-<tr>
-<td>关闭自动启动</td>
-<td>systemctl disable httpd.service</td>
-</tr>
-<tr>
-<td>重新加载</td>
-<td>systemctl daemon-reload</td>
-</tr>
-<tr>
-<td>列出所有服务</td>
-<td>systemctl list-unit-files –type=service</td>
-</tr>
-<tr>
-<td>校验service文件</td>
-<td>systemd-analyze verify nginx.service</td>
-</tr>
-</tbody>
-</table>
-<h3 id="create-serice"><a href="#create-serice" class="headerlink" title="create serice"></a>create serice</h3><ul>
-<li><p>Folder ‘systemd’</p>
-<p>   Cenos 7的systemctl脚本存放于/usr/lib/systemd/system及/etc/systemd/system。</p>
-</li>
-<li><p>Create ‘nginx.service’</p>
-<p>  在/etc/systemd/system目录下创建nginx.service文件</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div></pre></td><td class="code"><pre><div class="line">[Unit]</div><div class="line">Description=nginx - high performance web server</div><div class="line">Documentation=http://nginx.org/en/docs/</div><div class="line">After=network.target remote-fs.target nss-lookup.target</div><div class="line"></div><div class="line">[Service]</div><div class="line">Type=forking</div><div class="line">PIDFile=/opt/nginx-1.10.3/logs/nginx.pid</div><div class="line">ExecStartPre=/opt/nginx-1.10.3/sbin/nginx -t -c /opt/nginx-1.10.3/conf/nginx.conf</div><div class="line">ExecStart=/opt/nginx-1.10.3/sbin/nginx -c /opt/nginx-1.10.3/conf/nginx.conf</div><div class="line">ExecReload=/opt/nginx-1.10.3/sbin/nginx -s reload /opt/nginx-1.10.3/conf/nginx.conf</div><div class="line">ExecStop=/opt/nginx-1.10.3/sbin/nginx</div><div class="line">PrivateTmp=true</div><div class="line"></div><div class="line">[Install]</div><div class="line">WantedBy=multi-user.target</div></pre></td></tr></table></figure>
-</li>
-<li><p>systemctl start nginx</p>
-</li>
-<li>systemctl enbale nginx  <figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">Created symlink from /etc/systemd/system/multi-user.target.wants/nginx.service to /etc/systemd/system/nginx.service.</div></pre></td></tr></table></figure>
-</li>
-</ul>
-
-      
-    </div>
-    <footer>
-      
-        
-        
-      
-      <div class="clearfix"></div>
-    </footer>
-  </div>
-</article>
-
-
-
-
-
-<nav id="pagination">
-  
-  
-  <div class="clearfix"></div>
-</nav></div></div>
+</div></div>
     <aside id="sidebar" class="alignright">
   
 <div class="widget tag">
