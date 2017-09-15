@@ -50,6 +50,40 @@
     <header>
       
         <div class="icon"></div>
+        <time datetime="2017-09-15T02:43:17.000Z"><a href="/2017/09/15/useradd/">2017-09-15</a></time>
+      
+      
+  
+    <h1 class="title"><a href="/2017/09/15/useradd/">useradd</a></h1>
+  
+
+    </header>
+    <div class="entry">
+      
+        <h3 id="linux-添加用户"><a href="#linux-添加用户" class="headerlink" title="linux 添加用户"></a>linux 添加用户</h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div></pre></td><td class="code"><pre><div class="line">groupadd group_name	# 新建用户组</div><div class="line">useradd -g group_name -m user_name	# 在用户组下新建用户</div><div class="line">passwd user_name	# 修改用户密码</div><div class="line">vim /etc/sudoers	# 用户添加sudo权限</div><div class="line">	## Allow root to run any commands anywhere</div><div class="line">	user_name    ALL=(ALL)     ALL</div></pre></td></tr></table></figure>
+<h3 id="禁止root用户远程登陆"><a href="#禁止root用户远程登陆" class="headerlink" title="禁止root用户远程登陆"></a>禁止root用户远程登陆</h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line">vim /etc/ssh/sshd_config</div><div class="line">	PermitRootLogin yes/no</div><div class="line">systemctl restart sshd</div></pre></td></tr></table></figure>
+
+      
+    </div>
+    <footer>
+      
+        
+        
+      
+      <div class="clearfix"></div>
+    </footer>
+  </div>
+</article>
+
+
+
+
+  <article class="post">
+  
+  <div class="post-content">
+    <header>
+      
+        <div class="icon"></div>
         <time datetime="2017-09-14T13:10:06.000Z"><a href="/2017/09/14/filter-branch/">2017-09-14</a></time>
       
       
@@ -193,7 +227,7 @@
   
     <li><a href="/categories/git/">git</a><small>1</small></li>
   
-    <li><a href="/categories/linux/">linux</a><small>1</small></li>
+    <li><a href="/categories/linux/">linux</a><small>2</small></li>
   
   </ul>
 </div>
@@ -207,6 +241,8 @@
     <li><a href="/tags/git/">git</a><small>1</small></li>
   
     <li><a href="/tags/systemctl/">systemctl</a><small>1</small></li>
+  
+    <li><a href="/tags/useradd/">useradd</a><small>1</small></li>
   
   </ul>
 </div>
