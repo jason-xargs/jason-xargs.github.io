@@ -3,13 +3,22 @@
 <head>
   <meta charset="utf-8">
   
-  <title>MUSE</title>
+  <title>jdk7.HashMap | MUSE</title>
   <meta name="author" content="Jason">
+  
+  <meta name="description" content="construsctor默认构造器
+
+double loadFactor = 0.75
+int thresold = 16
+
+put操作
+首次向map中添元素
+12345678910111213141516public V put(K key, V value)     if (table == E">
   
   
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
 
-  
+  <meta property="og:title" content="jdk7.HashMap"/>
   <meta property="og:site_name" content="MUSE"/>
 
   
@@ -43,8 +52,7 @@
 <div class="clearfix"></div>
 </header>
   <div id="content" class="inner">
-    <div id="main-col" class="alignleft"><div id="wrapper">
-  <article class="post">
+    <div id="main-col" class="alignleft"><div id="wrapper"><article class="post">
   
   <div class="post-content">
     <header>
@@ -54,7 +62,7 @@
       
       
   
-    <h1 class="title"><a href="/2017/09/16/jdk7-HashMap/">jdk7.HashMap</a></h1>
+    <h1 class="title">jdk7.HashMap</h1>
   
 
     </header>
@@ -94,6 +102,17 @@
     <footer>
       
         
+  
+  <div class="categories">
+    <a href="/categories/JDK/">JDK</a>
+  </div>
+
+        
+  
+  <div class="tags">
+    <a href="/tags/HashMap/">HashMap</a>
+  </div>
+
         
       
       <div class="clearfix"></div>
@@ -102,184 +121,13 @@
 </article>
 
 
+<section id="comment">
+  <h1 class="title">Kommentare</h1>
 
-
-  <article class="post">
   
-  <div class="post-content">
-    <header>
-      
-        <div class="icon"></div>
-        <time datetime="2017-09-15T02:43:17.000Z"><a href="/2017/09/15/useradd/">2017-09-15</a></time>
-      
-      
-  
-    <h1 class="title"><a href="/2017/09/15/useradd/">useradd</a></h1>
-  
+</section>
 
-    </header>
-    <div class="entry">
-      
-        <h3 id="linux-添加用户"><a href="#linux-添加用户" class="headerlink" title="linux 添加用户"></a>linux 添加用户</h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div></pre></td><td class="code"><pre><div class="line">groupadd group_name	# 新建用户组</div><div class="line">useradd -g group_name -m user_name	# 在用户组下新建用户</div><div class="line">passwd user_name	# 修改用户密码</div><div class="line">vim /etc/sudoers	# 用户添加sudo权限</div><div class="line">	## Allow root to run any commands anywhere</div><div class="line">	user_name    ALL=(ALL)     ALL</div></pre></td></tr></table></figure>
-<h3 id="禁止root用户远程登陆"><a href="#禁止root用户远程登陆" class="headerlink" title="禁止root用户远程登陆"></a>禁止root用户远程登陆</h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line">vim /etc/ssh/sshd_config</div><div class="line">	PermitRootLogin yes/no</div><div class="line">systemctl restart sshd</div></pre></td></tr></table></figure>
-<h3 id="修改ssh默认端口"><a href="#修改ssh默认端口" class="headerlink" title="修改ssh默认端口"></a>修改ssh默认端口</h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div></pre></td><td class="code"><pre><div class="line">vim /etc/ssh/sshd_config</div><div class="line">	#Port 22</div><div class="line">	Prot 2222</div><div class="line">systemctl restart sshd</div></pre></td></tr></table></figure>
-
-      
-    </div>
-    <footer>
-      
-        
-        
-      
-      <div class="clearfix"></div>
-    </footer>
-  </div>
-</article>
-
-
-
-
-  <article class="post">
-  
-  <div class="post-content">
-    <header>
-      
-        <div class="icon"></div>
-        <time datetime="2017-09-14T13:10:06.000Z"><a href="/2017/09/14/filter-branch/">2017-09-14</a></time>
-      
-      
-  
-    <h1 class="title"><a href="/2017/09/14/filter-branch/">filter-branch</a></h1>
-  
-
-    </header>
-    <div class="entry">
-      
-        <ul>
-<li><p>修改git上次commit的user.name/user.email</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">git commit –amend –author=‘Your Name you@example.com’</div></pre></td></tr></table></figure>
-</li>
-<li><p>修改git历史commit的user.name/user.email</p>
-</li>
-</ul>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div></pre></td><td class="code"><pre><div class="line"># !/bin/sh</div><div class="line"></div><div class="line">git filter-branch --env-filter &apos;</div><div class="line"></div><div class="line">an=&quot;$GIT_AUTHOR_NAME&quot;</div><div class="line">am=&quot;$GIT_AUTHOR_EMAIL&quot;</div><div class="line">cn=&quot;$GIT_COMMITTER_NAME&quot;</div><div class="line">cm=&quot;$GIT_COMMITTER_EMAIL&quot;</div><div class="line"></div><div class="line">if [ &quot;$GIT_COMMITTER_EMAIL&quot; = &quot;your@email.to.match&quot; ]</div><div class="line">then</div><div class="line">    cn=&quot;Your New Committer Name&quot;</div><div class="line">    cm=&quot;Your New Committer Email&quot;</div><div class="line">fi</div><div class="line">if [ &quot;$GIT_AUTHOR_EMAIL&quot; = &quot;your@email.to.match&quot; ]</div><div class="line">then</div><div class="line">    an=&quot;Your New Author Name&quot;</div><div class="line">    am=&quot;Your New Author Email&quot;</div><div class="line">fi</div><div class="line"></div><div class="line">export GIT_AUTHOR_NAME=&quot;$an&quot;</div><div class="line">export GIT_AUTHOR_EMAIL=&quot;$am&quot;</div><div class="line">export GIT_COMMITTER_NAME=&quot;$cn&quot;</div><div class="line">export GIT_COMMITTER_EMAIL=&quot;$cm&quot;</div><div class="line">&apos;</div></pre></td></tr></table></figure>
-
-      
-    </div>
-    <footer>
-      
-        
-        
-      
-      <div class="clearfix"></div>
-    </footer>
-  </div>
-</article>
-
-
-
-
-  <article class="post">
-  
-  <div class="post-content">
-    <header>
-      
-        <div class="icon"></div>
-        <time datetime="2017-09-14T12:32:14.000Z"><a href="/2017/09/14/systemctl/">2017-09-14</a></time>
-      
-      
-  
-    <h1 class="title"><a href="/2017/09/14/systemctl/">systemctl</a></h1>
-  
-
-    </header>
-    <div class="entry">
-      
-        <h3 id="command-help"><a href="#command-help" class="headerlink" title="command help"></a>command help</h3><table>
-<thead>
-<tr>
-<th>task</th>
-<th>command</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td>启动</td>
-<td>systemctl start httpd.service</td>
-</tr>
-<tr>
-<td>停止</td>
-<td>systemctl stop httpd.service</td>
-</tr>
-<tr>
-<td>重启</td>
-<td>systemctl restart httpd.service</td>
-</tr>
-<tr>
-<td>删除服务</td>
-<td>rm user.service</td>
-</tr>
-<tr>
-<td>检查服务状态</td>
-<td>systemctl status httpd.service</td>
-</tr>
-<tr>
-<td>自动启动</td>
-<td>systemctl enable httpd.service</td>
-</tr>
-<tr>
-<td>关闭自动启动</td>
-<td>systemctl disable httpd.service</td>
-</tr>
-<tr>
-<td>重新加载</td>
-<td>systemctl daemon-reload</td>
-</tr>
-<tr>
-<td>列出所有服务</td>
-<td>systemctl list-unit-files –type=service</td>
-</tr>
-<tr>
-<td>校验service文件</td>
-<td>systemd-analyze verify nginx.service</td>
-</tr>
-</tbody>
-</table>
-<h3 id="create-serice"><a href="#create-serice" class="headerlink" title="create serice"></a>create serice</h3><ul>
-<li><p>Folder ‘systemd’</p>
-<p>   Cenos 7的systemctl脚本存放于/usr/lib/systemd/system及/etc/systemd/system。</p>
-</li>
-<li><p>Create ‘nginx.service’</p>
-<p>  在/etc/systemd/system目录下创建nginx.service文件</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div></pre></td><td class="code"><pre><div class="line">[Unit]</div><div class="line">Description=nginx - high performance web server</div><div class="line">Documentation=http://nginx.org/en/docs/</div><div class="line">After=network.target remote-fs.target nss-lookup.target</div><div class="line"></div><div class="line">[Service]</div><div class="line">Type=forking</div><div class="line">PIDFile=/opt/nginx-1.10.3/logs/nginx.pid</div><div class="line">ExecStartPre=/opt/nginx-1.10.3/sbin/nginx -t -c /opt/nginx-1.10.3/conf/nginx.conf</div><div class="line">ExecStart=/opt/nginx-1.10.3/sbin/nginx -c /opt/nginx-1.10.3/conf/nginx.conf</div><div class="line">ExecReload=/opt/nginx-1.10.3/sbin/nginx -s reload /opt/nginx-1.10.3/conf/nginx.conf</div><div class="line">ExecStop=/opt/nginx-1.10.3/sbin/nginx</div><div class="line">PrivateTmp=true</div><div class="line"></div><div class="line">[Install]</div><div class="line">WantedBy=multi-user.target</div></pre></td></tr></table></figure>
-</li>
-<li><p>systemctl start nginx</p>
-</li>
-<li>systemctl enbale nginx  <figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">Created symlink from /etc/systemd/system/multi-user.target.wants/nginx.service to /etc/systemd/system/nginx.service.</div></pre></td></tr></table></figure>
-</li>
-</ul>
-
-      
-    </div>
-    <footer>
-      
-        
-        
-      
-      <div class="clearfix"></div>
-    </footer>
-  </div>
-</article>
-
-
-
-
-
-<nav id="pagination">
-  
-  
-  <div class="clearfix"></div>
-</nav></div></div>
+</div></div>
     <aside id="sidebar" class="alignright">
   
 <div class="widget tag">
