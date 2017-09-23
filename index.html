@@ -50,6 +50,64 @@
     <header>
       
         <div class="icon"></div>
+        <time datetime="2017-09-23T11:03:15.000Z"><a href="/2017/09/23/批处理异步调用监控/">2017-09-23</a></time>
+      
+      
+  
+    <h1 class="title"><a href="/2017/09/23/批处理异步调用监控/">批处理异步调用监控</a></h1>
+  
+
+    </header>
+    <div class="entry">
+      
+        <h3 id="背景"><a href="#背景" class="headerlink" title="背景"></a>背景</h3><p>   工作中遇到这样一种情况：<br>     通过定时任务,每隔一分钟拉取database中的数据,并对数据进行异步处理,处理完成后要获取本次任务执行的成功数量/失败数量等等信息。<br>   实施过程中遇到两个难点:</p>
+<ol>
+<li>由于对数据的处理是异步执行的,要获取到执行结果首先想到的是通过Future来实现,但这种方式在仅需要获取执行成功/失败数量等简单信息时,显得对代码侵入过大。且该中情况出现在多处,代码修改工作量较大。</li>
+<li>由于是定时任务执行,故可能存在本次任务执行未完成而新的任务又发起的情况。未避免这种情况就需要明确知道本次任务的执行完成时间。</li>
+</ol>
+<h3 id="方案"><a href="#方案" class="headerlink" title="方案"></a>方案</h3><ol>
+<li><p>建立HealCount类,用于保存线程的执行结果</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div></pre></td><td class="code"><pre><div class="line">   public static class HealCount &#123;</div><div class="line"></div><div class="line">       private AtomicInteger executing = new AtomicInteger(); // 当前执行task的线程数量</div><div class="line">       private AtomicInteger success = new AtomicInteger(); // task执行成功数量</div><div class="line">       private AtomicInteger failed = new AtomicInteger(); // task执行失败数量</div><div class="line"></div><div class="line">// 任务线程执行前调用</div><div class="line">private void before() &#123; </div><div class="line">           executing.incrementAndGet(); </div><div class="line">       &#125;</div><div class="line"></div><div class="line">// 任务线程执行后调用</div><div class="line">       public void after(Throwable throwable) &#123;</div><div class="line">           executing.decrementAndGet();</div><div class="line">           if (null == throwable)</div><div class="line">               success.incrementAndGet();</div><div class="line">           else</div><div class="line">               failed.incrementAndGet();</div><div class="line">       &#125;</div><div class="line">   &#125;</div></pre></td></tr></table></figure>
+</li>
+<li><p>建立AsyncContext类,提供主线程及任务线程调用入口</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div></pre></td><td class="code"><pre><div class="line">public static class AsyncContext &#123;</div><div class="line"></div><div class="line">    private static final ConcurrentHashMap&lt;Runnable, HealCount&gt; CONTEXT_HOLDER = new ConcurrentHashMap();</div><div class="line">    </div><div class="line">    // 主线程分发任务前调用</div><div class="line">    public static void init() &#123;</div><div class="line">        CONTEXT_HOLDER.putIfAbsent(Thread.currentThread(), new HealCount());</div><div class="line">    &#125;</div><div class="line">    // 主线程获取任务执行结果</div><div class="line">    public static HealCount get() &#123;</div><div class="line">        if (null == CONTEXT_HOLDER.get(Thread.currentThread()))</div><div class="line">            return null;</div><div class="line">        return CONTEXT_HOLDER.get(Thread.currentThread());</div><div class="line">    &#125;</div><div class="line">    // 主线程确认自线程已全部执行完毕后调用</div><div class="line">    public static HealCount getAndDestroy() &#123;</div><div class="line">        if (null == CONTEXT_HOLDER.get(Thread.currentThread()))</div><div class="line">            return null;</div><div class="line">        return CONTEXT_HOLDER.remove(Thread.currentThread());</div><div class="line">    &#125;</div><div class="line">    </div><div class="line">    public static boolean initialized(Runnable key) &#123;</div><div class="line">        return null != CONTEXT_HOLDER.get(key);</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    public static void before(Runnable key) &#123;</div><div class="line">        CONTEXT_HOLDER.get(key).before();</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    public static void after(Runnable key, Throwable t) &#123;</div><div class="line">        CONTEXT_HOLDER.get(key).after(t);</div><div class="line">    &#125;</div><div class="line"></div><div class="line">&#125;</div></pre></td></tr></table></figure>
+</li>
+<li><p>建立AsyncParam类,对任务参数进行封装</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div></pre></td><td class="code"><pre><div class="line">public static class AsyncParam&lt;T&gt; &#123;</div><div class="line">    private Runnable key;</div><div class="line">    private T param;</div><div class="line"></div><div class="line">    public Runnable getKey() &#123;</div><div class="line">        return key;</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    public T getParam() &#123;</div><div class="line">        return param;</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    public AsyncParam(T param) &#123;</div><div class="line">        this.key = Thread.currentThread();</div><div class="line">        this.param = param;</div><div class="line">    &#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+</li>
+<li><p>建立MonitorRunnable类,对Runnable对象进行封装</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div></pre></td><td class="code"><pre><div class="line">public static abstract class MonitorRunnable implements Runnable &#123;</div><div class="line"></div><div class="line">    abstract void before();</div><div class="line"></div><div class="line">    abstract void after(Throwable throwable);</div><div class="line"></div><div class="line">    abstract void execute();</div><div class="line"></div><div class="line">    @Override</div><div class="line">    public void run() &#123;</div><div class="line">        before();</div><div class="line">        try &#123;</div><div class="line">            execute();</div><div class="line">        &#125; catch (Exception e) &#123;</div><div class="line">            after(e);</div><div class="line">            throw e;</div><div class="line">        &#125;</div><div class="line">        after(null);</div><div class="line">    &#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+</li>
+<li><p>建立DefaultMonitorRunnable对象,实现Monitor抽象类</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div></pre></td><td class="code"><pre><div class="line">public static abstract class DefaultMonitorRunnable&lt;T&gt; extends MonitorRunnable &#123;</div><div class="line">    private AsyncParam&lt;T&gt; asyncParam;</div><div class="line"></div><div class="line">    public DefaultMonitorRunnable(AsyncParam asyncParam) &#123;</div><div class="line">        this.asyncParam = asyncParam;</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    @Override</div><div class="line">    void before() &#123;</div><div class="line">        if (null != asyncParam.getKey() &amp;&amp; !AsyncContext.initialized(asyncParam.getKey()))</div><div class="line">            return;</div><div class="line">        AsyncContext.before(asyncParam.getKey());</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    @Override</div><div class="line">    void after(Throwable throwable) &#123;</div><div class="line">        if (null != asyncParam.getKey() &amp;&amp; !AsyncContext.initialized(asyncParam.getKey()))</div><div class="line">            return;</div><div class="line">        AsyncContext.after(asyncParam.getKey(), throwable);</div><div class="line">    &#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+</li>
+<li><p>测试</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div><div class="line">35</div><div class="line">36</div><div class="line">37</div><div class="line">38</div><div class="line">39</div><div class="line">40</div><div class="line">41</div><div class="line">42</div><div class="line">43</div><div class="line">44</div><div class="line">45</div><div class="line">46</div></pre></td><td class="code"><pre><div class="line">public class AsyncContextTest &#123;</div><div class="line"></div><div class="line">    static ExecutorService executorService = Executors.newFixedThreadPool(10);</div><div class="line"></div><div class="line">    public static void main(String[] args) &#123;</div><div class="line"></div><div class="line">        AsyncContext.init(); // 初始化</div><div class="line"></div><div class="line">        try &#123;</div><div class="line">            doDistribution(); // 任务分配</div><div class="line">            print(); // 结果收集</div><div class="line">        &#125; catch (Exception e) &#123;</div><div class="line">            e.printStackTrace();</div><div class="line">        &#125;</div><div class="line"></div><div class="line">        AsyncContext.getAndDestroy(); // 销毁</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    public static void doDistribution() &#123;</div><div class="line">        for (int i = 0; i &lt; 20; i++) &#123;</div><div class="line">            executorService.execute(new DefaultMonitorRunnable&lt;Long&gt;(new AsyncParam&lt;&gt;(1000L)) &#123; // 由创建Runnbale对象改为创建DefaultMonitorRunnable对象,并对原有参数进行封装</div><div class="line">                @Override</div><div class="line">                void execute() &#123; // 由覆盖run()方法改为覆盖execute()方法</div><div class="line">                    try &#123;</div><div class="line">                        Thread.sleep(super.asyncParam.getParam());</div><div class="line">                    &#125; catch (InterruptedException e) &#123;</div><div class="line">                        e.printStackTrace();</div><div class="line">                    &#125;</div><div class="line">                    System.out.println(Thread.currentThread().getName());</div><div class="line">                &#125;</div><div class="line">            &#125;);</div><div class="line">        &#125;</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    private static void print() &#123;</div><div class="line">        HealCount healCount;</div><div class="line">        if ((healCount = AsyncContext.get()) == null)</div><div class="line">            return;</div><div class="line">        System.out.println(healCount);</div><div class="line">        while (true) &#123;</div><div class="line">            if (healCount.getExecuting().get() == 0) &#123; // 判断当前执行中的线程数量为0可断定所有线程均已执行完毕</div><div class="line">                System.out.println(&quot;finished,success:&quot; + healCount.getSuccess().get() + &quot;;failed:&quot; + healCount.getFailed().get());</div><div class="line">                break;</div><div class="line">            &#125;</div><div class="line">        &#125;</div><div class="line">    &#125;</div></pre></td></tr></table></figure>
+</li>
+</ol>
+<h3 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h3><p>   该方案可在修改少量代码的情况下完成预期的目标。但由于计数是由AtomicInteger实现,在线程池中线程数量较多的情况下需考虑对性能的影响。</p>
+
+      
+    </div>
+    <footer>
+      
+        
+        
+      
+      <div class="clearfix"></div>
+    </footer>
+  </div>
+</article>
+
+
+
+
+  <article class="post">
+  
+  <div class="post-content">
+    <header>
+      
+        <div class="icon"></div>
         <time datetime="2017-09-23T08:33:51.000Z"><a href="/2017/09/23/ThreadPoolExecutor/">2017-09-23</a></time>
       
       
@@ -85,7 +143,7 @@
 3. 若添加失败,则尝试创建新的线程且线程成功创建后直接运行当前任务;
 4. 若线程池容量大于maxPoolSize则reject当前任务;
 </code></pre><blockquote>
-<p>仅当任务队列满时,线程池才会创建大于corePoolSize数量的线程。</p>
+<p>仅当任务队列满时,线程池才会创建大于corePoolSize数量的线程。故自定义线程池参数时应注意corePoolSize/maxPoolSize及队列的大小,避免队列过长且corePoolSize与maxPoolSize差距过大导致仅有corePoolSize的线程数工作,而maxPoolSize不生效。</p>
 </blockquote>
 
       
@@ -347,6 +405,8 @@
   
     <li><a href="/categories/JDK/">JDK</a><small>2</small></li>
   
+    <li><a href="/categories/Java/">Java</a><small>1</small></li>
+  
     <li><a href="/categories/git/">git</a><small>1</small></li>
   
     <li><a href="/categories/linux/">linux</a><small>2</small></li>
@@ -362,7 +422,7 @@
   
     <li><a href="/tags/HashMap/">HashMap</a><small>1</small></li>
   
-    <li><a href="/tags/ThreadPool/">ThreadPool</a><small>1</small></li>
+    <li><a href="/tags/ThreadPool/">ThreadPool</a><small>2</small></li>
   
     <li><a href="/tags/git/">git</a><small>1</small></li>
   

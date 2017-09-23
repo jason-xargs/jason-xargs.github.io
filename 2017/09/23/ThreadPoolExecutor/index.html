@@ -88,7 +88,7 @@
 3. 若添加失败,则尝试创建新的线程且线程成功创建后直接运行当前任务;
 4. 若线程池容量大于maxPoolSize则reject当前任务;
 </code></pre><blockquote>
-<p>仅当任务队列满时,线程池才会创建大于corePoolSize数量的线程。</p>
+<p>仅当任务队列满时,线程池才会创建大于corePoolSize数量的线程。故自定义线程池参数时应注意corePoolSize/maxPoolSize及队列的大小,避免队列过长且corePoolSize与maxPoolSize差距过大导致仅有corePoolSize的线程数工作,而maxPoolSize不生效。</p>
 </blockquote>
 
       
@@ -130,6 +130,8 @@
   
     <li><a href="/categories/JDK/">JDK</a><small>2</small></li>
   
+    <li><a href="/categories/Java/">Java</a><small>1</small></li>
+  
     <li><a href="/categories/git/">git</a><small>1</small></li>
   
     <li><a href="/categories/linux/">linux</a><small>2</small></li>
@@ -145,7 +147,7 @@
   
     <li><a href="/tags/HashMap/">HashMap</a><small>1</small></li>
   
-    <li><a href="/tags/ThreadPool/">ThreadPool</a><small>1</small></li>
+    <li><a href="/tags/ThreadPool/">ThreadPool</a><small>2</small></li>
   
     <li><a href="/tags/git/">git</a><small>1</small></li>
   
