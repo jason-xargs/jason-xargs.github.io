@@ -1,0 +1,183 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+  <meta charset="utf-8">
+  
+  <title>jira-install | MUSE</title>
+  <meta name="author" content="Jason">
+  
+  <meta name="description" content="MySQL数据库配置
+创建database
+1CREATE DATABASE jiradb CHARACTER SET utf8 COLLATE utf8_bin;
+
+权限设置
+1234CREATE USER &amp;apos;username&amp;apos;@&amp;apos;host&amp;apos; IDENTIF">
+  
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+
+  <meta property="og:title" content="jira-install"/>
+  <meta property="og:site_name" content="MUSE"/>
+
+  
+    <meta property="og:image" content=""/>
+  
+
+  <link href="/favicon.png" rel="icon">
+  <link rel="alternate" href="/atom.xml" title="MUSE" type="application/atom+xml">
+  <link rel="stylesheet" href="/css/style.css" media="screen" type="text/css">
+  <!--[if lt IE 9]><script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script><![endif]-->
+  
+
+</head>
+
+
+<body>
+  <header id="header" class="inner"><div class="alignleft">
+  <h1><a href="/">MUSE</a></h1>
+  <h2><a href="/"></a></h2>
+</div>
+<nav id="main-nav" class="alignright">
+  <ul>
+    
+      <li><a href="/">Home</a></li>
+    
+      <li><a href="/archives">Archives</a></li>
+    
+  </ul>
+  <div class="clearfix"></div>
+</nav>
+<div class="clearfix"></div>
+</header>
+  <div id="content" class="inner">
+    <div id="main-col" class="alignleft"><div id="wrapper"><article class="post">
+  
+  <div class="post-content">
+    <header>
+      
+        <div class="icon"></div>
+        <time datetime="2017-10-04T09:33:17.000Z"><a href="/2017/10/04/jira-install/">2017-10-04</a></time>
+      
+      
+  
+    <h1 class="title">jira-install</h1>
+  
+
+    </header>
+    <div class="entry">
+      
+        <h4 id="MySQL数据库配置"><a href="#MySQL数据库配置" class="headerlink" title="MySQL数据库配置"></a>MySQL数据库配置</h4><ol>
+<li><p>创建database</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">CREATE DATABASE jiradb CHARACTER SET utf8 COLLATE utf8_bin;</div></pre></td></tr></table></figure>
+</li>
+<li><p>权限设置</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div></pre></td><td class="code"><pre><div class="line">CREATE USER &apos;username&apos;@&apos;host&apos; IDENTIFIED BY &apos;password&apos;;</div><div class="line">GRANT SELECT,INSERT,UPDATE,DELETE,CREATE,DROP,ALTER,INDEX on &lt;JIRADB&gt;.* TO &apos;&lt;USERNAME&gt;&apos;@&apos;&lt;JIRA_SERVER_HOSTNAME&gt;&apos; IDENTIFIED BY &apos;&lt;PASSWORD&gt;&apos;;</div><div class="line">flush privileges;</div><div class="line">SHOW GRANTS FOR &lt;USERNAME&gt;@&lt;JIRA_SERVER_HOSTNAME&gt;;</div></pre></td></tr></table></figure>
+</li>
+<li><p>修改MySQL配置</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div></pre></td><td class="code"><pre><div class="line">vim /etc/my.cnf</div><div class="line">default-storage-engine=INNODB</div><div class="line">max_allowed_packet=256M</div><div class="line">innodb_log_file_size=256M</div><div class="line">sql_mode = NO_AUTO_VALUE_ON_ZERO</div></pre></td></tr></table></figure>
+</li>
+<li><p>重启MySQL</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">systemctl restart mysqld.service</div></pre></td></tr></table></figure>
+</li>
+</ol>
+<h4 id="jira安装"><a href="#jira安装" class="headerlink" title="jira安装"></a>jira安装</h4><ol>
+<li><p>修改安装文件权限</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">chmod a+x atlassian-jira-software-7.5.0-x64.bin</div></pre></td></tr></table></figure>
+</li>
+<li><p>执行安装文件</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">sudo ./atlassian-jira-software-7.5.0-x64.bin</div></pre></td></tr></table></figure>
+</li>
+<li><p>添加mysql JDBC driver</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">cp mysql-connector-java-5.1.44-bin.jar /opt/atlassian/jira/lib/</div></pre></td></tr></table></figure>
+</li>
+<li><p>重启jira</p>
+</li>
+</ol>
+
+      
+    </div>
+    <footer>
+      
+        
+  
+  <div class="categories">
+    <a href="/categories/linux/">linux</a>
+  </div>
+
+        
+  
+  <div class="tags">
+    <a href="/tags/mysql/">mysql</a>
+  </div>
+
+        
+      
+      <div class="clearfix"></div>
+    </footer>
+  </div>
+</article>
+
+
+<section id="comment">
+  <h1 class="title">Kommentare</h1>
+
+  
+</section>
+
+</div></div>
+    <aside id="sidebar" class="alignright">
+  
+<div class="widget tag">
+  <h3 class="title">Kategorien</h3>
+  <ul class="entry">
+  
+    <li><a href="/categories/JDK/">JDK</a><small>2</small></li>
+  
+    <li><a href="/categories/Java/">Java</a><small>1</small></li>
+  
+    <li><a href="/categories/git/">git</a><small>1</small></li>
+  
+    <li><a href="/categories/linux/">linux</a><small>4</small></li>
+  
+  </ul>
+</div>
+
+
+  
+<div class="widget tag">
+  <h3 class="title">Tags</h3>
+  <ul class="entry">
+  
+    <li><a href="/tags/HashMap/">HashMap</a><small>1</small></li>
+  
+    <li><a href="/tags/ThreadPool/">ThreadPool</a><small>2</small></li>
+  
+    <li><a href="/tags/git/">git</a><small>1</small></li>
+  
+    <li><a href="/tags/mysql/">mysql</a><small>2</small></li>
+  
+    <li><a href="/tags/systemctl/">systemctl</a><small>1</small></li>
+  
+    <li><a href="/tags/useradd/">useradd</a><small>1</small></li>
+  
+  </ul>
+</div>
+
+</aside>
+    <div class="clearfix"></div>
+  </div>
+  <footer id="footer" class="inner"><div class="alignleft">
+  
+  &copy; 2017 Jason
+  
+</div>
+<div class="clearfix"></div></footer>
+  <script src="//ajax.googleapis.com/ajax/libs/jquery/2.0.3/jquery.min.js"></script>
+<script src="/js/jquery.imagesloaded.min.js"></script>
+<script src="/js/gallery.js"></script>
+
+
+
+
+</body>
+</html>
