@@ -3,15 +3,15 @@
 <head>
   <meta charset="utf-8">
   
-  <title>useradd | MUSE</title>
+  <title>Batch-Update | MUSE</title>
   <meta name="author" content="Jason">
   
-  <meta name="description" content="linux 添加用户123456groupadd group_name	# 新建用户组useradd -g group_name -m user_name	# 在用户组下新建用户passwd user_name	# 修改用户密码vim /etc/sudoers	# 用户添加sudo权限	## All">
+  <meta name="description" content="MySQL-MyBatis 批量更新123456789101112131415&amp;lt;update id=&amp;quot;batchUpdate&amp;quot; parameterType=&amp;quot;java.util.List&amp;quot;&amp;gt;    update    &amp;lt;include ref">
   
   
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
 
-  <meta property="og:title" content="useradd"/>
+  <meta property="og:title" content="Batch-Update"/>
   <meta property="og:site_name" content="MUSE"/>
 
   
@@ -51,19 +51,17 @@
     <header>
       
         <div class="icon"></div>
-        <time datetime="2017-09-15T02:43:17.000Z"><a href="/2017/09/15/useradd/">2017-09-15</a></time>
+        <time datetime="2017-12-06T07:47:52.000Z"><a href="/2017/12/06/Batch-Update/">2017-12-06</a></time>
       
       
   
-    <h1 class="title">useradd</h1>
+    <h1 class="title">Batch-Update</h1>
   
 
     </header>
     <div class="entry">
       
-        <h3 id="linux-添加用户"><a href="#linux-添加用户" class="headerlink" title="linux 添加用户"></a>linux 添加用户</h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div></pre></td><td class="code"><pre><div class="line">groupadd group_name	# 新建用户组</div><div class="line">useradd -g group_name -m user_name	# 在用户组下新建用户</div><div class="line">passwd user_name	# 修改用户密码</div><div class="line">vim /etc/sudoers	# 用户添加sudo权限</div><div class="line">	## Allow root to run any commands anywhere</div><div class="line">	user_name    ALL=(ALL)     ALL</div></pre></td></tr></table></figure>
-<h3 id="禁止root用户远程登陆"><a href="#禁止root用户远程登陆" class="headerlink" title="禁止root用户远程登陆"></a>禁止root用户远程登陆</h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line">vim /etc/ssh/sshd_config</div><div class="line">	PermitRootLogin yes/no</div><div class="line">systemctl restart sshd</div></pre></td></tr></table></figure>
-<h3 id="修改ssh默认端口"><a href="#修改ssh默认端口" class="headerlink" title="修改ssh默认端口"></a>修改ssh默认端口</h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div></pre></td><td class="code"><pre><div class="line">vim /etc/ssh/sshd_config</div><div class="line">	#Port 22</div><div class="line">	Prot 2222</div><div class="line">systemctl restart sshd</div></pre></td></tr></table></figure>
+        <h4 id="MySQL-MyBatis-批量更新"><a href="#MySQL-MyBatis-批量更新" class="headerlink" title="MySQL-MyBatis 批量更新"></a>MySQL-MyBatis 批量更新</h4><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div></pre></td><td class="code"><pre><div class="line">&lt;update id=&quot;batchUpdate&quot; parameterType=&quot;java.util.List&quot;&gt;</div><div class="line"></div><div class="line">    update</div><div class="line">    &lt;include refid=&quot;tableName&quot;/&gt;</div><div class="line">    set status =</div><div class="line">    &lt;foreach collection=&quot;list&quot; item=&quot;item&quot; separator=&quot; &quot; open=&quot;case id&quot; close=&quot;end,&quot;&gt;</div><div class="line">        when #&#123;item.id&#125; then #&#123;item.status&#125;</div><div class="line">    &lt;/foreach&gt;</div><div class="line">    utime = unix_timestamp()</div><div class="line">    where id in</div><div class="line">    &lt;foreach collection=&quot;list&quot; item=&quot;item&quot; separator=&quot;,&quot; open=&quot;(&quot; close=&quot;)&quot;&gt;</div><div class="line">        #&#123;item.id&#125;</div><div class="line">    &lt;/foreach&gt;</div><div class="line"></div><div class="line">&lt;/update&gt;</div></pre></td></tr></table></figure>
 
       
     </div>
@@ -72,13 +70,13 @@
         
   
   <div class="categories">
-    <a href="/categories/Linux/">Linux</a>
+    <a href="/categories/Java/">Java</a>
   </div>
 
         
   
   <div class="tags">
-    <a href="/tags/useradd/">useradd</a>
+    <a href="/tags/MySQL/">MySQL</a>
   </div>
 
         

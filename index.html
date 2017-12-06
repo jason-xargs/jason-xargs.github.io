@@ -50,6 +50,182 @@
     <header>
       
         <div class="icon"></div>
+        <time datetime="2017-12-06T07:47:52.000Z"><a href="/2017/12/06/Batch-Update/">2017-12-06</a></time>
+      
+      
+  
+    <h1 class="title"><a href="/2017/12/06/Batch-Update/">Batch-Update</a></h1>
+  
+
+    </header>
+    <div class="entry">
+      
+        <h4 id="MySQL-MyBatis-批量更新"><a href="#MySQL-MyBatis-批量更新" class="headerlink" title="MySQL-MyBatis 批量更新"></a>MySQL-MyBatis 批量更新</h4><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div></pre></td><td class="code"><pre><div class="line">&lt;update id=&quot;batchUpdate&quot; parameterType=&quot;java.util.List&quot;&gt;</div><div class="line"></div><div class="line">    update</div><div class="line">    &lt;include refid=&quot;tableName&quot;/&gt;</div><div class="line">    set status =</div><div class="line">    &lt;foreach collection=&quot;list&quot; item=&quot;item&quot; separator=&quot; &quot; open=&quot;case id&quot; close=&quot;end,&quot;&gt;</div><div class="line">        when #&#123;item.id&#125; then #&#123;item.status&#125;</div><div class="line">    &lt;/foreach&gt;</div><div class="line">    utime = unix_timestamp()</div><div class="line">    where id in</div><div class="line">    &lt;foreach collection=&quot;list&quot; item=&quot;item&quot; separator=&quot;,&quot; open=&quot;(&quot; close=&quot;)&quot;&gt;</div><div class="line">        #&#123;item.id&#125;</div><div class="line">    &lt;/foreach&gt;</div><div class="line"></div><div class="line">&lt;/update&gt;</div></pre></td></tr></table></figure>
+
+      
+    </div>
+    <footer>
+      
+        
+        
+      
+      <div class="clearfix"></div>
+    </footer>
+  </div>
+</article>
+
+
+
+
+  <article class="post">
+  
+  <div class="post-content">
+    <header>
+      
+        <div class="icon"></div>
+        <time datetime="2017-12-06T07:26:34.000Z"><a href="/2017/12/06/Explain/">2017-12-06</a></time>
+      
+      
+  
+    <h1 class="title"><a href="/2017/12/06/Explain/">Explain</a></h1>
+  
+
+    </header>
+    <div class="entry">
+      
+        <h3 id="Header"><a href="#Header" class="headerlink" title="Header"></a>Header</h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line">+----+-------------+-------+------+---------------+------+---------+------+------+----------------+</div><div class="line">| id | select_type | table | type | possible_keys | key  | key_len | ref  | rows | Extra          |</div><div class="line">+----+-------------+-------+------+---------------+------+---------+------+------+----------------+</div></pre></td></tr></table></figure>
+<ul>
+<li>type<ul>
+<li>const</li>
+<li>ref</li>
+<li>range</li>
+<li>index</li>
+<li>all</li>
+</ul>
+</li>
+<li>possible_keys</li>
+<li>key</li>
+<li>key_len<ul>
+<li>int            =&gt;    4+1</li>
+<li>int not null        =&gt;    4</li>
+<li>char(n)        =&gt;    n*10+1</li>
+<li>cahr(n) not null    =&gt;    n*10</li>
+<li>varchar(n)        =&gt;    n*10+2+1</li>
+<li>varcahr(n) not null    =&gt;    n*10+2</li>
+</ul>
+</li>
+<li>ref</li>
+<li>rows</li>
+<li>Extra<ul>
+<li>Using where; Using index</li>
+<li>Using where</li>
+<li>Using filesort</li>
+<li>Using index</li>
+</ul>
+</li>
+</ul>
+<h3 id="Simple"><a href="#Simple" class="headerlink" title="Simple"></a>Simple</h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div></pre></td><td class="code"><pre><div class="line">CREATE TABLE `index_test` (</div><div class="line">	`id` int(11) NOT NULL AUTO_INCREMENT,</div><div class="line">	`a` int(11) NOT NULL,</div><div class="line">	`b` int(11) NOT NULL,</div><div class="line">	`c` int(11) NOT NULL,</div><div class="line">	`d` int(11) NOT NULL,</div><div class="line">	PRIMARY KEY (`id`)</div><div class="line">) COMMENT=&apos;&apos;;</div></pre></td></tr></table></figure>
+<h3 id="根据字段c查询"><a href="#根据字段c查询" class="headerlink" title="根据字段c查询"></a>根据字段c查询</h3><ul>
+<li>无索引</li>
+</ul>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div></pre></td><td class="code"><pre><div class="line">mysql&gt; explain select * from index_test where c = 1512525961;</div><div class="line">+----+-------------+------------+------+---------------+------+---------+------+---------+-------------+</div><div class="line">| id | select_type | table      | type | possible_keys | key  | key_len | ref  | rows    | Extra       |</div><div class="line">+----+-------------+------------+------+---------------+------+---------+------+---------+-------------+</div><div class="line">|  1 | SIMPLE      | index_test | ALL  | NULL          | NULL | NULL    | NULL | 1440587 | Using where |</div><div class="line">+----+-------------+------------+------+---------------+------+---------+------+---------+-------------+</div></pre></td></tr></table></figure>
+<ul>
+<li>字段c添加索引</li>
+</ul>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div></pre></td><td class="code"><pre><div class="line">ALTER TABLE `index_test` ADD INDEX `index_c` (`c`) comment &apos;&apos;;</div><div class="line">mysql&gt; explain select * from index_test where c = 1512525963;</div><div class="line">+----+-------------+------------+------+---------------+---------+---------+-------+------+-------+</div><div class="line">| id | select_type | table      | type | possible_keys | key     | key_len | ref   | rows | Extra |</div><div class="line">+----+-------------+------------+------+---------------+---------+---------+-------+------+-------+</div><div class="line">|  1 | SIMPLE      | index_test | ref  | index_c       | index_c | 4       | const |    3 |       |</div><div class="line">+----+-------------+------------+------+---------------+---------+---------+-------+------+-------+</div><div class="line"></div><div class="line">mysql&gt; explain select c from index_test where c = 1512525963;</div><div class="line">+----+-------------+------------+------+---------------+---------+---------+-------+------+-------------+</div><div class="line">| id | select_type | table      | type | possible_keys | key     | key_len | ref   | rows | Extra       |</div><div class="line">+----+-------------+------------+------+---------------+---------+---------+-------+------+-------------+</div><div class="line">|  1 | SIMPLE      | index_test | ref  | index_c       | index_c | 4       | const |    3 | Using index |</div><div class="line">+----+-------------+------------+------+---------------+---------+---------+-------+------+-------------+</div></pre></td></tr></table></figure>
+<h3 id="根据字段a-字段b查询"><a href="#根据字段a-字段b查询" class="headerlink" title="根据字段a 字段b查询"></a>根据字段a 字段b查询</h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line">mysql&gt; update index_test set b = 1 where a &gt;= 1512527700;</div><div class="line">Query OK, 48800 rows affected (0.77 sec)</div><div class="line">Rows matched: 48800  Changed: 48800  Warnings: 0</div></pre></td></tr></table></figure>
+<ul>
+<li>无索引</li>
+</ul>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div></pre></td><td class="code"><pre><div class="line">mysql&gt; explain select count(1) from index_test where a &gt;= 1512526200 and a &lt;= 1512527760 and b = 1;</div><div class="line">+----+-------------+------------+------+---------------+------+---------+------+---------+-------------+</div><div class="line">| id | select_type | table      | type | possible_keys | key  | key_len | ref  | rows    | Extra       |</div><div class="line">+----+-------------+------------+------+---------------+------+---------+------+---------+-------------+</div><div class="line">|  1 | SIMPLE      | index_test | ALL  | NULL          | NULL | NULL    | NULL | 1440586 | Using where |</div><div class="line">+----+-------------+------------+------+---------------+------+---------+------+---------+-------------+</div><div class="line">1 row in set (0.01 sec)</div></pre></td></tr></table></figure>
+<ul>
+<li>字段a添加索引</li>
+</ul>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div></pre></td><td class="code"><pre><div class="line">ALTER TABLE `index_test` ADD INDEX `index_a` USING BTREE (`a`) comment &apos;&apos;;</div><div class="line">mysql&gt; explain select count(1) from index_test where a &gt;= 1512526500 and a &lt;= 1512527760;</div><div class="line">+----+-------------+------------+-------+---------------+---------+---------+------+--------+--------------------------+</div><div class="line">| id | select_type | table      | type  | possible_keys | key     | key_len | ref  | rows   | Extra                    |</div><div class="line">+----+-------------+------------+-------+---------------+---------+---------+------+--------+--------------------------+</div><div class="line">|  1 | SIMPLE      | index_test | range | index_a       | index_a | 4       | NULL | 720293 | Using where; Using index |</div><div class="line">+----+-------------+------------+-------+---------------+---------+---------+------+--------+--------------------------+</div><div class="line">1 row in set (0.01 sec)</div><div class="line"></div><div class="line">mysql&gt; explain select count(1) from index_test where a &gt;= 1512526500 and a &lt;= 1512527760 and b = 1;</div><div class="line">+----+-------------+------------+------+---------------+------+---------+------+---------+-------------+</div><div class="line">| id | select_type | table      | type | possible_keys | key  | key_len | ref  | rows    | Extra       |</div><div class="line">+----+-------------+------------+------+---------------+------+---------+------+---------+-------------+</div><div class="line">|  1 | SIMPLE      | index_test | ALL  | index_a       | NULL | NULL    | NULL | 1440586 | Using where |</div><div class="line">+----+-------------+------------+------+---------------+------+---------+------+---------+-------------+</div><div class="line">1 row in set (0.07 sec)</div></pre></td></tr></table></figure>
+<blockquote>
+<p>添加索引后, 仅根据字段a查询会使用索引而加入b条件则不使用索引</p>
+</blockquote>
+<ul>
+<li>字段a/b添加组合索引</li>
+</ul>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">ALTER TABLE `index_test` DROP INDEX `index_a`, ADD INDEX `index_a` USING BTREE (`a`, `b`) comment &apos;&apos;;</div></pre></td></tr></table></figure>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div></pre></td><td class="code"><pre><div class="line">mysql&gt; explain select count(1) from index_test where a &gt;= 1512526500 and a &lt;= 1512527760 ;</div><div class="line">+----+-------------+------------+-------+---------------+---------+---------+------+--------+--------------------------+</div><div class="line">| id | select_type | table      | type  | possible_keys | key     | key_len | ref  | rows   | Extra                    |</div><div class="line">+----+-------------+------------+-------+---------------+---------+---------+------+--------+--------------------------+</div><div class="line">|  1 | SIMPLE      | index_test | range | index_a       | index_a | 4       | NULL | 720287 | Using where; Using index |</div><div class="line">+----+-------------+------------+-------+---------------+---------+---------+------+--------+--------------------------+</div><div class="line">1 row in set (0.00 sec)</div></pre></td></tr></table></figure>
+<blockquote>
+<p>仅使用a作为查询条件, ken_len为4</p>
+</blockquote>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div></pre></td><td class="code"><pre><div class="line">mysql&gt; explain select count(1) from index_test where a &gt;= 1512526500 and a &lt;= 1512527760 and b = 0;</div><div class="line">+----+-------------+------------+-------+---------------+---------+---------+------+--------+--------------------------+</div><div class="line">| id | select_type | table      | type  | possible_keys | key     | key_len | ref  | rows   | Extra                    |</div><div class="line">+----+-------------+------------+-------+---------------+---------+---------+------+--------+--------------------------+</div><div class="line">|  1 | SIMPLE      | index_test | range | index_a       | index_a | 8       | NULL | 720287 | Using where; Using index |</div><div class="line">+----+-------------+------------+-------+---------------+---------+---------+------+--------+--------------------------+</div><div class="line">1 row in set (0.00 sec)</div></pre></td></tr></table></figure>
+<blockquote>
+<p>使用ab做组合查询, ken_len为8</p>
+</blockquote>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div></pre></td><td class="code"><pre><div class="line">mysql&gt; explain select count(1) from index_test where b = 0 and a &gt;= 1512526500 and a &lt;= 1512527760;</div><div class="line">+----+-------------+------------+-------+---------------+---------+---------+------+--------+--------------------------+</div><div class="line">| id | select_type | table      | type  | possible_keys | key     | key_len | ref  | rows   | Extra                    |</div><div class="line">+----+-------------+------------+-------+---------------+---------+---------+------+--------+--------------------------+</div><div class="line">|  1 | SIMPLE      | index_test | range | index_a       | index_a | 8       | NULL | 720287 | Using where; Using index |</div><div class="line">+----+-------------+------------+-------+---------------+---------+---------+------+--------+--------------------------+</div><div class="line">1 row in set (0.01 sec)</div></pre></td></tr></table></figure>
+<blockquote>
+<p>使用ab做组合查询, 但where条件中ab顺序与索引顺序不一致, key_len依然为8 ??</p>
+</blockquote>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div></pre></td><td class="code"><pre><div class="line">mysql&gt; explain select count(1) from index_test where b = 0;</div><div class="line">+----+-------------+------------+-------+---------------+---------+---------+------+---------+--------------------------+</div><div class="line">| id | select_type | table      | type  | possible_keys | key     | key_len | ref  | rows    | Extra                    |</div><div class="line">+----+-------------+------------+-------+---------------+---------+---------+------+---------+--------------------------+</div><div class="line">|  1 | SIMPLE      | index_test | index | NULL          | index_a | 8       | NULL | 1440574 | Using where; Using index |</div><div class="line">+----+-------------+------------+-------+---------------+---------+---------+------+---------+--------------------------+</div><div class="line">1 row in set (0.01 sec)</div></pre></td></tr></table></figure>
+<blockquote>
+<p>仅使用b作为查询条件, ken_len依然为8 ??</p>
+</blockquote>
+<ul>
+<li>改变索引ab先后顺序</li>
+</ul>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">ALTER TABLE `index_test` DROP INDEX `index_a`, ADD INDEX `index_a` USING BTREE (`b`, `a`) comment &apos;&apos;;</div></pre></td></tr></table></figure>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div></pre></td><td class="code"><pre><div class="line">mysql&gt; explain select count(1) from index_test where b = 1 and a &gt;= 1512526500 and a &lt;= 1512527760;</div><div class="line">+----+-------------+------------+-------+---------------+---------+---------+------+-------+--------------------------+</div><div class="line">| id | select_type | table      | type  | possible_keys | key     | key_len | ref  | rows  | Extra                    |</div><div class="line">+----+-------------+------------+-------+---------------+---------+---------+------+-------+--------------------------+</div><div class="line">|  1 | SIMPLE      | index_test | range | index_a       | index_a | 8       | NULL | 94286 | Using where; Using index |</div><div class="line">+----+-------------+------------+-------+---------------+---------+---------+------+-------+--------------------------+</div><div class="line">1 row in set (0.00 sec)</div></pre></td></tr></table></figure>
+<blockquote>
+<p>与改变索引顺序前比较, rows明显减少</p>
+</blockquote>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div></pre></td><td class="code"><pre><div class="line">mysql&gt; explain select count(1) from index_test where a &gt;= 1512526500 and a &lt;= 1512527760 and b = 1;</div><div class="line">+----+-------------+------------+-------+---------------+---------+---------+------+-------+--------------------------+</div><div class="line">| id | select_type | table      | type  | possible_keys | key     | key_len | ref  | rows  | Extra                    |</div><div class="line">+----+-------------+------------+-------+---------------+---------+---------+------+-------+--------------------------+</div><div class="line">|  1 | SIMPLE      | index_test | range | index_a       | index_a | 8       | NULL | 94286 | Using where; Using index |</div><div class="line">+----+-------------+------------+-------+---------------+---------+---------+------+-------+--------------------------+</div><div class="line">1 row in set (0.00 sec)</div></pre></td></tr></table></figure>
+<blockquote>
+<p>改变where语句中的条件顺序, 结果不表</p>
+</blockquote>
+<ul>
+<li>增加按主键排序</li>
+</ul>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div></pre></td><td class="code"><pre><div class="line">mysql&gt; explain select *  from index_test where a &gt;= 1512526500 and a &lt;= 1512527760 and b = 1 order by id asc;</div><div class="line">+----+-------------+------------+-------+---------------+---------+---------+------+-------+-----------------------------+</div><div class="line">| id | select_type | table      | type  | possible_keys | key     | key_len | ref  | rows  | Extra                       |</div><div class="line">+----+-------------+------------+-------+---------------+---------+---------+------+-------+-----------------------------+</div><div class="line">|  1 | SIMPLE      | index_test | range | index_a       | index_a | 8       | NULL | 94286 | Using where; Using filesort |</div><div class="line">+----+-------------+------------+-------+---------------+---------+---------+------+-------+-----------------------------+</div><div class="line">1 row in set (0.00 sec)</div></pre></td></tr></table></figure>
+<ul>
+<li>修改组合索引, 增加id字段</li>
+</ul>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">ALTER TABLE `index_test` DROP INDEX `index_a`, ADD INDEX `index_a` USING BTREE (`b`, `a`, `id`) comment &apos;&apos;;</div></pre></td></tr></table></figure>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div></pre></td><td class="code"><pre><div class="line">mysql&gt; explain select *  from index_test where b = 1 and a = 1512527760 order by id asc;</div><div class="line">+----+-------------+------------+------+---------------+---------+---------+-------------+------+-------------+</div><div class="line">| id | select_type | table      | type | possible_keys | key     | key_len | ref         | rows | Extra       |</div><div class="line">+----+-------------+------------+------+---------------+---------+---------+-------------+------+-------------+</div><div class="line">|  1 | SIMPLE      | index_test | ref  | index_a       | index_a | 8       | const,const |  799 | Using where |</div><div class="line">+----+-------------+------------+------+---------------+---------+---------+-------------+------+-------------+</div><div class="line">1 row in set (0.01 sec)</div></pre></td></tr></table></figure>
+<blockquote>
+<p>where条件中不包含between and 查询</p>
+</blockquote>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div></pre></td><td class="code"><pre><div class="line">mysql&gt; explain select *  from index_test where b = 1 and a &gt; 1512527760 order by id asc;</div><div class="line">+----+-------------+------------+-------+---------------+---------+---------+------+------+-----------------------------+</div><div class="line">| id | select_type | table      | type  | possible_keys | key     | key_len | ref  | rows | Extra                       |</div><div class="line">+----+-------------+------------+-------+---------------+---------+---------+------+------+-----------------------------+</div><div class="line">|  1 | SIMPLE      | index_test | range | index_a       | index_a | 8       | NULL |    1 | Using where; Using filesort |</div><div class="line">+----+-------------+------------+-------+---------------+---------+---------+------+------+-----------------------------+</div><div class="line">1 row in set (0.00 sec)</div></pre></td></tr></table></figure>
+<blockquote>
+<p>where条件中包含<code>between and</code>, <code>Exta</code>字段为<code>Using where; Using filesort</code> </p>
+</blockquote>
+<h3 id="Questions"><a href="#Questions" class="headerlink" title="Questions"></a>Questions</h3><ul>
+<li>组合索引顺序是否必须与where条件中字段出现的先后顺序一致? (不需要,mysql会自动对where顺序进行优化)</li>
+<li>当where条件语句中含有<code>between and</code>时, 组合索引是否还会生效? (between and 后的索引不可用)</li>
+<li>当组合索引为ba时:</li>
+</ul>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div></pre></td><td class="code"><pre><div class="line">mysql&gt; select count(1) from index_test where b = 1;</div><div class="line">+----------+</div><div class="line">| count(1) |</div><div class="line">+----------+</div><div class="line">|    48800 |</div><div class="line">+----------+</div><div class="line">1 row in set (0.01 sec)</div></pre></td></tr></table></figure>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div></pre></td><td class="code"><pre><div class="line">mysql&gt; explain select count(1) from index_test where b = 1;</div><div class="line">+----+-------------+------------+------+---------------+---------+---------+-------+-------+-------------+</div><div class="line">| id | select_type | table      | type | possible_keys | key     | key_len | ref   | rows  | Extra       |</div><div class="line">+----+-------------+------------+------+---------------+---------+---------+-------+-------+-------------+</div><div class="line">|  1 | SIMPLE      | index_test | ref  | index_a       | index_a | 4       | const | 94286 | Using index |</div><div class="line">+----+-------------+------------+------+---------------+---------+---------+-------+-------+-------------+</div><div class="line">1 row in set (0.05 sec)</div><div class="line">mysql&gt; explain select count(1) from index_test where b = 1 and a &gt;= 1512526500;</div><div class="line">+----+-------------+------------+-------+---------------+---------+---------+------+-------+--------------------------+</div><div class="line">| id | select_type | table      | type  | possible_keys | key     | key_len | ref  | rows  | Extra                    |</div><div class="line">+----+-------------+------------+-------+---------------+---------+---------+------+-------+--------------------------+</div><div class="line">|  1 | SIMPLE      | index_test | range | index_a       | index_a | 8       | NULL | 94286 | Using where; Using index |</div><div class="line">+----+-------------+------------+-------+---------------+---------+---------+------+-------+--------------------------+</div><div class="line">1 row in set (0.00 sec)</div></pre></td></tr></table></figure>
+<blockquote>
+<p>table中b=1的记录总数为48800; 两次explain时为何rows=94286?</p>
+</blockquote>
+<h3 id="数据写入代码"><a href="#数据写入代码" class="headerlink" title="数据写入代码"></a>数据写入代码</h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div></pre></td><td class="code"><pre><div class="line"># -*- coding:utf-8 -*-</div><div class="line">import MySQLdb</div><div class="line">import time</div><div class="line"></div><div class="line">host = &apos;10.4.234.169&apos;</div><div class="line">port = 3306</div><div class="line">user = &apos;q3boy&apos;</div><div class="line">password = &apos;alkf@xpdw&apos;</div><div class="line">db = &apos;waimai&apos;</div><div class="line"></div><div class="line"># 模拟每秒钟生产800条记录, 模拟30分钟数据, 且c字段不重复</div><div class="line">if __name__ == &apos;__main__&apos;:</div><div class="line"></div><div class="line">    conn = MySQLdb.connect(host=host, port=port, user=user, passwd=password, db=db, charset=&quot;utf8&quot;)</div><div class="line">    cursor = conn.cursor()</div><div class="line">    sql = &apos;insert into index_test(a, b, c, d) values (%s, %s, %s, %s)&apos;</div><div class="line"></div><div class="line">    start_time = int(time.time())</div><div class="line">    for interval in range(0, 30 * 60):</div><div class="line">        param = []</div><div class="line">        for index in range(0, 800):</div><div class="line">            param.append((start_time + interval, 0, start_time + interval + index, 0))</div><div class="line">        cursor.executemany(sql, param)</div><div class="line">        conn.commit()</div><div class="line">    cursor.close()</div><div class="line">    conn.close()</div></pre></td></tr></table></figure>
+
+      
+    </div>
+    <footer>
+      
+        
+        
+      
+      <div class="clearfix"></div>
+    </footer>
+  </div>
+</article>
+
+
+
+
+  <article class="post">
+  
+  <div class="post-content">
+    <header>
+      
+        <div class="icon"></div>
         <time datetime="2017-10-04T09:33:17.000Z"><a href="/2017/10/04/jira-install/">2017-10-04</a></time>
       
       
@@ -509,16 +685,14 @@
     <aside id="sidebar" class="alignright">
   
 <div class="widget tag">
-  <h3 class="title">Kategorien</h3>
+  <h3 class="title">Categories</h3>
   <ul class="entry">
   
-    <li><a href="/categories/JDK/">JDK</a><small>2</small></li>
+    <li><a href="/categories/Java/">Java</a><small>5</small></li>
   
-    <li><a href="/categories/Java/">Java</a><small>1</small></li>
+    <li><a href="/categories/Linux/">Linux</a><small>4</small></li>
   
     <li><a href="/categories/git/">git</a><small>1</small></li>
-  
-    <li><a href="/categories/linux/">linux</a><small>4</small></li>
   
   </ul>
 </div>
@@ -531,11 +705,11 @@
   
     <li><a href="/tags/HashMap/">HashMap</a><small>1</small></li>
   
+    <li><a href="/tags/MySQL/">MySQL</a><small>4</small></li>
+  
     <li><a href="/tags/ThreadPool/">ThreadPool</a><small>2</small></li>
   
     <li><a href="/tags/git/">git</a><small>1</small></li>
-  
-    <li><a href="/tags/mysql/">mysql</a><small>2</small></li>
   
     <li><a href="/tags/systemctl/">systemctl</a><small>1</small></li>
   
